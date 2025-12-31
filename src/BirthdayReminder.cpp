@@ -2,7 +2,7 @@
 #include <iostream>
 
 BirthdayReminder::BirthdayReminder()
-    : birthday(Date(1970, 1, 1)), username("User"), hasBirthday(false) {}
+    : birthday(Date(1970, 1, 1)), username("User") {}
 
 void BirthdayReminder::setBirthday(const Date& d, const std::string& name) {
     birthday = d;

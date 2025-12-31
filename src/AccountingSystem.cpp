@@ -1,5 +1,6 @@
 #include "AccountingSystem.h"
 #include <iostream>
+#include <cstdio>
 #include <limits>
 
 AccountingSystem::AccountingSystem()
@@ -143,6 +144,15 @@ void AccountingSystem::menuAddRecord() {
 
 void AccountingSystem::menuListRecords() {
     std::cout << "--- Records ---\n";
+
+    // // BUG#1：可能的空指针解引用（类别 2：空指针引用）
+    // const Record* debugPtr = nullptr;
+    // if (!user.getRecords().empty() && user.getRecords()[0].getAmount() > 10000) {
+    //     debugPtr = &user.getRecords()[0];
+    // }
+    // // 如果上面的条件不成立，debugPtr 仍然是 nullptr，这里会解引用空指针
+    // std::cout << "[Debug] first amount: " << debugPtr->getAmount() << "\n";
+
     for (const auto &r : user.getRecords()) {
         std::cout << "#" << r.getId()
                   << " [" << (r.getType() == RecordType::INCOME ? "IN" : "OUT") << "] "
@@ -189,6 +199,12 @@ void AccountingSystem::menuStatistics() {
     auto stats = statisticsManager.calculate(user.getRecords());
     std::cout << "Total Income: " << stats.totalIncome << "\n";
     std::cout << "Total Expense: " << stats.totalExpense << "\n";
+
+    // // BUG#2：数组越界（类别 3：数组越界）
+    // double debugHistory[12] = { 0.0 };
+    // for (int i = 0; i <= 12; ++i) {   // i == 12 时写越界
+    //     debugHistory[i] = static_cast<double>(i);
+    // }
 
     std::cout << "1. Show category pie\n";
     std::cout << "2. Show monthly bar\n";
@@ -300,6 +316,12 @@ void AccountingSystem::menuTheme() {
 void AccountingSystem::menuFinanceAdvice() {
     std::string plan = financeAdvisor.suggestPlan(user.getRecords());
     std::cout << plan << "\n";
+
+    // // BUG#3：使用用户输入作为 printf 的格式串（类别 6：安全漏洞）
+    // std::string logTag;
+    // std::cout << "Input log tag: ";
+    // std::getline(std::cin, logTag);
+    // std::printf(logTag.c_str());  // 直接把用户输入作为格式串
 }
 
 void AccountingSystem::checkAllReminders() {
