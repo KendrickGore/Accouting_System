@@ -1,4 +1,5 @@
 #include "Date.h"
+
 #include <cstdio>
 #include <ctime>
 #include <chrono>
@@ -11,12 +12,17 @@ Date Date::today() {
     std::time_t now = std::time(nullptr);
 
     std::tm localTime{};
+#if defined(_WIN32) || defined(_WIN64)
+    // Windows: localtime_s(dest, source)
     localtime_s(&localTime, &now);
+#else
+    // POSIX: localtime_r(source, dest)
+    localtime_r(&now, &localTime);
+#endif
 
     int y = localTime.tm_year + 1900;
     int m = localTime.tm_mon + 1;
     int d = localTime.tm_mday;
-
     return Date(y, m, d);
 }
 
