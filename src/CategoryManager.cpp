@@ -1,5 +1,6 @@
 #include "CategoryManager.h"
 #include <algorithm>
+#include <stdexcept>
 
 CategoryManager::CategoryManager() {
     categories.emplace_back("Food");
@@ -11,11 +12,19 @@ CategoryManager::CategoryManager() {
 
 void CategoryManager::addCategory(const std::string &name) {
     if (!hasCategory(name)) {
-        categories.emplace_back(name);
+        Category newCategory(name);
+        categories.emplace_back(newCategory);
     }
 }
 
 void CategoryManager::removeCategory(const std::string &name) {
+    // 禁止删除默认分类
+    static const std::vector<std::string> defaultCategories = {
+        "Food", "Transport", "Salary", "Investment", "Entertainment"};
+    if (std::find(defaultCategories.begin(), defaultCategories.end(), name) != defaultCategories.end()) {
+        throw std::invalid_argument("Cannot remove default category: " + name);
+    }
+
     categories.erase(
         std::remove_if(categories.begin(), categories.end(),
                        [&name](const Category &c) { return c.getName() == name; }),
